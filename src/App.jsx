@@ -10,7 +10,7 @@ import Signup from "./pages/Signup";
 
 function App() {
 	return (
-		<div className="">
+		<div className="min-h-screen">
 			<Routes>
 				<Route path="signup" element={<Signup />} />
 				<Route path="login" element={<Login />} />
