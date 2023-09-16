@@ -1,1 +1,1 @@
-export const API_URL = "app.slink.lat/";
+export const API_URL = "http://app.slink.lat/";
