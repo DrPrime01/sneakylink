@@ -5,7 +5,7 @@ export default {
 		extend: {
 			backgroundColor: {
 				"custom-black": "rgba(0, 0, 0, 0.14)",
-				"glass1-stroke-carey": "var(--Glass1-Stroke-Carey, #AFAFAF)",
+				"glass1-stroke-carey": "#AFAFAF",
 			},
 			backgroundImage: {
 				"custom-gradient":
