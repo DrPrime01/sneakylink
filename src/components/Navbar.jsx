@@ -1,10 +1,60 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useRef, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { AuthContext } from "../AuthProvider";
 
 function Navbar() {
 	const [showProfileDropdown, setShowProfileDropdown] = useState(false);
+	const [dropdown, setDropdown] = useState(false);
 	const { user } = useContext(AuthContext);
+
+	const handleProfileDropdown = () => {
+		setDropdown(false);
+		setShowProfileDropdown(!showProfileDropdown);
+	};
+
+	const handleDropdown = () => {
+		setShowProfileDropdown(false);
+		setDropdown(!dropdown);
+	};
+
+	const profileDropdownRef = useRef(null);
+	const buttonRef = useRef(null);
+	const dropdownRef = useRef(null);
+	const dropdownBtnRef = useRef(null);
+
+	useEffect(() => {
+		const handleClickOutside = (e) => {
+			if (
+				profileDropdownRef.current &&
+				!profileDropdownRef.current.contains(e.target) &&
+				!buttonRef.current.contains(e.target)
+			) {
+				setShowProfileDropdown(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, []);
+
+	useEffect(() => {
+		const handleClickOutside = (e) => {
+			if (
+				dropdownRef.current &&
+				!dropdownRef.current.contains(e.target) &&
+				!dropdownBtnRef.current.contains(e.target)
+			) {
+				setDropdown(false);
+			}
+		};
+
+		document.addEventListener("mousedown", handleClickOutside);
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside);
+		};
+	}, []);
 	return (
 		<nav className="bg-black border-gray-200">
 			<div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
@@ -31,7 +81,8 @@ function Navbar() {
 						<>
 							<button
 								type="button"
-								onClick={() => setShowProfileDropdown(!showProfileDropdown)}
+								ref={buttonRef}
+								onClick={handleProfileDropdown}
 								className="flex mr-3 text-sm bg-gray-800 rounded-full md:mr-0 focus:ring-4 focus:ring-gray-300 "
 								id="user-menu-button"
 								aria-expanded="false"
@@ -46,6 +97,7 @@ function Navbar() {
 								/>
 							</button>
 							<div
+								ref={profileDropdownRef}
 								className={`z-50 ${
 									showProfileDropdown ? "" : "hidden"
 								} my-4 text-base list-none text-gray-300 divide-y divide-gray-100 rounded-lg shadow absolute right-0 top-10 border bg-white`}
@@ -60,14 +112,6 @@ function Navbar() {
 									</span>
 								</div>
 								<ul className="py-2" aria-labelledby="user-menu-button">
-									<li>
-										<NavLink
-											to={`${user?.username}/dashboard`}
-											className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-										>
-											Dashboard
-										</NavLink>
-									</li>
 									<li>
 										<NavLink
 											to="#"
@@ -90,8 +134,10 @@ function Navbar() {
 					)}
 					{user?.isAuthenticated && (
 						<button
+							ref={dropdownBtnRef}
 							data-collapse-toggle="navbar-user"
 							type="button"
+							onClick={handleDropdown}
 							className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
 							aria-controls="navbar-user"
 							aria-expanded="false"
@@ -117,10 +163,13 @@ function Navbar() {
 				</div>
 				{user?.isAuthenticated && (
 					<div
-						className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1"
+						ref={dropdownRef}
+						className={`items-center justify-between ${
+							dropdown ? "flex" : "hidden"
+						} w-full md:flex md:w-auto md:order-1 relative`}
 						id="navbar-user"
 					>
-						<ul className="flex flex-col font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg md:flex-row md:space-x-8 md:mt-0 md:border-0">
+						<ul className="absolute right-0 top-2 z-50 md:relative flex flex-col font-medium p-4 md:p-0 mt-4 bg-black md:bg-transparent border border-gray-100 rounded-lg md:flex-row md:space-x-8 md:mt-0 md:border-0">
 							<li>
 								<NavLink
 									to={`/${user?.username}`}
@@ -132,10 +181,10 @@ function Navbar() {
 							</li>
 							<li>
 								<NavLink
-									to="#"
+									to={`${user?.username}/dashboard`}
 									className="block py-2 pl-3 pr-4 text-gray-300 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-purple-700 md:p-0"
 								>
-									About
+									Dashboard
 								</NavLink>
 							</li>
 							<li>

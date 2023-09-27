@@ -120,7 +120,7 @@ function Signup() {
 				<span className="text-purple-600 text-2xl font-semibold italic text-center">
 					Slink
 				</span>
-				<div className="w-[26.5rem] p-8 bg-custom-gradient border border-[#AFAFAF] rounded-2xl shadow-2xl backdrop-blur-sm">
+				<div className="md:w-[26.5rem] w-[24rem] p-8 bg-custom-gradient border border-[#AFAFAF] rounded-2xl shadow-2xl backdrop-blur-sm">
 					<div className="text-center mb-8">
 						<span className="text-lg font-semibold text-white">Sign in</span>
 					</div>
