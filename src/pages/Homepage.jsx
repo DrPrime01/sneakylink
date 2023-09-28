@@ -81,15 +81,22 @@ function Homepage() {
 						Url
 					</label>
 					<div className="relative">
-						<input
-							type="text"
-							id="search"
-							className="block w-full bg-transparent border-t-0 border-x-0 shadow-xl p-4 pl-10 text-sm text-gray-300 truncate border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-							placeholder="Enter url here..."
-							value={url}
-							onChange={handleUrl}
-							required
-						/>
+						<div>
+							<input
+								type="text"
+								id="search"
+								className="block w-full bg-transparent border-t-0 border-x-0 shadow-xl py-4 md:w-5/6 text-sm text-gray-300 truncate border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+								placeholder="Enter url here..."
+								value={url}
+								onChange={handleUrl}
+								required
+							/>
+							{urlError && (
+								<span className="block mt-3 text-red-500 text-left">
+									Enter a valid URL!!!
+								</span>
+							)}
+						</div>
 						<input
 							type="text"
 							id="search"
