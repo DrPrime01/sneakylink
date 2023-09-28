@@ -1,5 +1,7 @@
 import { useState, useContext } from "react";
+import { HiClipboardList } from "react-icons/hi";
 import { Navigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { AuthContext } from "../AuthProvider";
 import axios from "axios";
 import { API_URL } from "../Constants/constants";
@@ -10,6 +12,27 @@ function Homepage() {
 	const [customId, setCustomId] = useState("");
 	const { user } = useContext(AuthContext);
 	const token = localStorage.getItem("token");
+
+	const [urlError, setUrlError] = useState(false);
+
+	const isValidURL = (str) => {
+		const pattern = new RegExp(
+			"^(https?:\\/\\/)?" +
+				"((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|" +
+				"((\\d{1,3}\\.){3}\\d{1,3}))" +
+				"(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
+				"(\\?[;&a-z\\d%_.~+=-]*)?" +
+				"(\\#[-a-z\\d_]*)?$",
+			"i"
+		);
+		return !!pattern.test(str);
+	};
+
+	const handleUrl = (e) => {
+		const value = e.target.value;
+		setUrl(value);
+		setUrlError(!isValidURL(value));
+	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
@@ -31,6 +54,15 @@ function Homepage() {
 			setCustomId("");
 		} catch (err) {
 			console.log(err);
+		}
+	};
+	const copyToClipboard = () => {
+		if (!shortUrl) return;
+		try {
+			navigator.clipboard.writeText(shortUrl);
+			toast("URL copied to clipboard");
+		} catch (err) {
+			console.error("Failed to copy URL: ", err);
 		}
 	};
 	if (!user?.isAuthenticated) {
@@ -55,7 +87,7 @@ function Homepage() {
 							className="block w-full bg-transparent border-t-0 border-x-0 shadow-xl p-4 pl-10 text-sm text-gray-300 truncate border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
 							placeholder="Enter url here..."
 							value={url}
-							onChange={(e) => setUrl(e.target.value)}
+							onChange={handleUrl}
 							required
 						/>
 						<input
@@ -69,16 +101,23 @@ function Homepage() {
 						/>
 						<button
 							type="submit"
-							className="text-white absolute right-2.5 bottom-2.5 bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br font-medium rounded-lg text-sm px-6 py-2"
+							disabled={urlError || !url}
+							className="text-white absolute right-2.5 disabled:opacity-50 bottom-2.5 bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br font-medium rounded-lg text-sm px-6 py-2"
 						>
 							Submit
 						</button>
 					</div>
 				</form>
-				<div className="mt-10 border rounded-lg h-12 text-gray-300 text-left flex items-center pl-4">
+				<div className="mt-10 border rounded-lg h-12 text-gray-300 text-left flex items-center justify-between px-4">
 					<a href={shortUrl} target="_blank" rel="noreferrer">
 						{shortUrl}
 					</a>
+					<div className="text-right">
+						<HiClipboardList
+							className="text-purple-500 cursor-pointer"
+							onClick={copyToClipboard}
+						/>
+					</div>
 				</div>
 			</div>
 		</section>
